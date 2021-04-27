@@ -6,7 +6,7 @@ from unsupkeypoints.data.nn_feature_matching import NNFeatureMatching
 from unsupkeypoints.data.colmap_reconstructor import ColmapReconstructor
 
 model_file = "/home/mikhail/research/d2-net/models/d2_ots.pth"
-feature_extractor = D2NetFeatureExtractor(model_file=model_file, mininal_score=14)
+feature_extractor = D2NetFeatureExtractor(model_file=model_file, minimal_score=14)
 kapture_path = "data/test_feature_extractor"
 image_path = "/home/mikhail/research/unsup-3d-keypoints/data/kapture/7scenes/fire/mapping/sensors/records_data"
 kapture_data = KaptureData.load_from("data/input_kapture_data", kapture_path, image_path)

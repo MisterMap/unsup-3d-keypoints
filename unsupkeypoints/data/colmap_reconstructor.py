@@ -33,11 +33,13 @@ class ColmapReconstructor(object):
         os.makedirs(reconstruction_path, exist_ok=True)
 
         # COLMAP does not fully support rigs.
+        print("Step 1. Remove rigs")
         if kapture_data.rigs is not None and kapture_data.trajectories is not None:
             # make sure, rigs are not used in trajectories.
             rigs_remove_inplace(kapture_data.trajectories, kapture_data.rigs)
             kapture_data.rigs.clear()
 
+        print("Step 2. Kapture to colmap")
         colmap_db = COLMAPDatabase.connect(colmap_db_path)
         database_extra.kapture_to_colmap(kapture_data, kapture_data.kapture_path, colmap_db,
                                          export_two_view_geometry=True)
@@ -45,11 +47,13 @@ class ColmapReconstructor(object):
 
         os.makedirs(priors_txt_path, exist_ok=True)
 
+        print("Step 3. Generate priors for reconstruction")
         colmap_db = COLMAPDatabase.connect(colmap_db_path)
         database_extra.generate_priors_for_reconstruction(kapture_data, colmap_db, priors_txt_path)
         colmap_db.close()
 
         # Point triangulator
+        print("Step 4. Point triangulator")
         reconstruction_path = path.join(self._colmap_path, "reconstruction")
         os.makedirs(reconstruction_path, exist_ok=True)
         run_point_triangulator(
@@ -60,11 +64,13 @@ class ColmapReconstructor(object):
             reconstruction_path,
             self._point_triangulator_options
         )
+        print("Step 5. Model converter")
         run_model_converter(
             self._colmap_binary,
             reconstruction_path,
             reconstruction_path
         )
+        print("Step 5. Reconstruction import")
         points3d, observations = import_from_colmap_points3d_txt(os.path.join(reconstruction_path, "points3D.txt"),
                                                                  kapture_data.image_names)
         kapture_data.observations = observations

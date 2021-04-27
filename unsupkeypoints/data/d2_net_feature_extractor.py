@@ -12,13 +12,13 @@ from utils import preprocess_image
 
 
 class D2NetFeatureExtractor(object):
-    def __init__(self, model_file, mininal_score=None):
+    def __init__(self, model_file, minimal_score=None):
         self._model = D2Net(
             model_file=model_file,
             use_relu=True,
             use_cuda=True
         )
-        self._minimal_score = mininal_score
+        self._minimal_score = minimal_score
 
     def get_keypoints(self, image_path):
         image = np.asarray(Image.open(image_path))
@@ -26,6 +26,7 @@ class D2NetFeatureExtractor(object):
         image_tensor = torch.tensor(image_tensor).float().cuda()
         with torch.no_grad():
             keypoints, scores, descriptors = process_multiscale(image_tensor, self._model, scales=[1])
+        keypoints = keypoints[:, :2][:, ::-1]
         if self._minimal_score is not None:
             mask = scores > self._minimal_score
             keypoints = keypoints[mask]
