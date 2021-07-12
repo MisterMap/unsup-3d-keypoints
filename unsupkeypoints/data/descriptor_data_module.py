@@ -17,13 +17,13 @@ class DescriptorDataModule(pl.LightningDataModule):
         print(f"[DescriptorDataModule] - test dataset size {len(self._test_dataset)}")
 
     def train_dataloader(self, *args, **kwargs):
-        return DataLoader(self._train_dataset, self._batch_size, True, pin_memory=True, num_workers=self._num_workers)
+        return DataLoader(self._train_dataset, self._batch_size, True, pin_memory=False, num_workers=self._num_workers)
 
     def val_dataloader(self, *args, **kwargs):
-        return DataLoader(self._test_dataset, self._batch_size, False, pin_memory=True, num_workers=self._num_workers)
+        return DataLoader(self._test_dataset, self._batch_size, False, pin_memory=False, num_workers=self._num_workers)
 
     def test_dataloader(self, *args, **kwargs):
-        return DataLoader(self._test_dataset, self._batch_size, False, pin_memory=True, num_workers=self._num_workers)
+        return DataLoader(self._test_dataset, self._batch_size, False, pin_memory=False, num_workers=self._num_workers)
 
     def set_batch_size(self, batch_size):
         self._batch_size = batch_size

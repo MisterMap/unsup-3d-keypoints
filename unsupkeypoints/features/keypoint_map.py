@@ -6,7 +6,7 @@ import quaternion
 
 
 class KeypointMap(object):
-    def __init__(self):
+    def __init__(self, descriptor_name="d2net"):
         self.points3d = None
         self.keypoints = None
         self.descriptors = None
@@ -16,6 +16,7 @@ class KeypointMap(object):
         self.keypoint_index_list = None
         self.image_index_from_image_name = None
         self.keypoint_count = 0
+        self._descriptor_name = descriptor_name
 
     def load_from_kapture(self, kapture_data, minimal_observation_count=10):
         image_list = [filename for _, _, filename in kapture.flatten(kapture_data.records_camera)]
@@ -28,12 +29,15 @@ class KeypointMap(object):
         keypoint_index_list = []
         self.keypoint_count = 0
         for i, image_path in enumerate(image_list):
-            descriptors_full_path = get_descriptors_fullpath(kapture_data.kapture_path, image_path)
-            descriptors.append(image_descriptors_from_file(descriptors_full_path, kapture_data.descriptors.dtype,
-                                                           kapture_data.descriptors.dsize))
-            keypoints_full_path = get_keypoints_fullpath(kapture_data.kapture_path, image_path)
-            keypoints.append(image_keypoints_from_file(keypoints_full_path, kapture_data.keypoints.dtype,
-                                                       kapture_data.keypoints.dsize))
+            descriptors_full_path = get_descriptors_fullpath(self._descriptor_name, kapture_data.kapture_path,
+                                                             image_path)
+            kapture_descriptors = kapture_data.descriptors[self._descriptor_name]
+            descriptors.append(image_descriptors_from_file(descriptors_full_path, kapture_descriptors.dtype,
+                                                           kapture_descriptors.dsize))
+            keypoints_full_path = get_keypoints_fullpath(self._descriptor_name, kapture_data.kapture_path, image_path)
+            kapture_keypoints = kapture_data.keypoints[self._descriptor_name]
+            keypoints.append(image_keypoints_from_file(keypoints_full_path, kapture_keypoints.dtype,
+                                                       kapture_keypoints.dsize))
             point_count = len(keypoints[i])
             points3d.append(np.zeros((point_count, 3), dtype=np.float32))
             mask.append(np.zeros(point_count, dtype=np.bool))
@@ -43,8 +47,8 @@ class KeypointMap(object):
             self.keypoint_count += point_count
 
         for point_index, observation in kapture_data.observations.items():
-            if len(observation) > minimal_observation_count:
-                for observation_image_name, image_keypoints_index in observation:
+            if len(observation[self._descriptor_name]) > minimal_observation_count:
+                for observation_image_name, image_keypoints_index in observation[self._descriptor_name]:
                     image_index = image_indexes[observation_image_name]
                     mask[image_index][image_keypoints_index] = True
                     points3d[image_index][image_keypoints_index] = kapture_data.points3d[point_index][:3]
