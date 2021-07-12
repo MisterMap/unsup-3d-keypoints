@@ -12,7 +12,7 @@ class BaseLightningModule(pl.LightningModule):
     def loss(self, batch):
         raise NotImplementedError()
 
-    def metric(self):
+    def metrics(self):
         metrics = self._result_saver.get_metrics()
         return metrics
 

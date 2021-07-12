@@ -13,4 +13,4 @@ class ResultSaver(object):
         self._positions = []
 
     def get_metrics(self):
-        pass
+        return {}
