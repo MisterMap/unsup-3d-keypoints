@@ -1,1 +1,2 @@
 from .regression_loss import RegressionLoss
+from .rgb_and_model_reprojection_loss import RGBandModelReprojectionLoss
