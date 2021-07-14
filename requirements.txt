@@ -1,0 +1,14 @@
+numpy
+scipy
+matplotlib
+tqdm
+pillow
+torchvision
+torch
+setuptools
+wheel
+grpcio
+pytorch-lightning
+pyyaml>=5.4.1
+kapture
+opencv-python
