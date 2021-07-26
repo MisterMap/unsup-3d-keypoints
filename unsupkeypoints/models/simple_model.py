@@ -13,6 +13,6 @@ class SimpleModel(nn.Sequential):
         for dimension in hidden_dimensions:
             modules.append(nn.Linear(input_dimension, dimension))
             input_dimension = dimension
-            modules.append(ACTIVATIONS[activation])
+            modules.append(ACTIVATIONS[activation]())
         modules.append(nn.Linear(input_dimension, output_dimension))
         super().__init__(*modules)

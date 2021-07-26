@@ -1,1 +1,3 @@
 from .point_network import PointNetwork
+from .binarization_layer_point_network import BinarizationPointNetwork
+from .simple_model import SimpleModel

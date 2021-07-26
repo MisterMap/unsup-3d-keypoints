@@ -15,7 +15,7 @@ class UniversalFactory(object):
             return parameters
         for class_name_attribute in CLASS_NAME_ATTRIBUTES:
             if class_name_attribute in parameters.keys():
-                class_name = self._classes[class_name_attribute]
+                class_name = parameters[class_name_attribute]
                 try:
                     init_function = self._classes[class_name]
                 except KeyError:
@@ -23,7 +23,7 @@ class UniversalFactory(object):
         if init_function is None:
             return parameters
         kwargs = {}
-        for value, key in parameters.items():
+        for key, value in parameters.items():
             kwargs[key] = self.make_from_parameters(value)
         init_function_attributes = signature(init_function).parameters.keys()
         for parameter_name in PARAMETER_ATTRIBUTE_NAMES:
