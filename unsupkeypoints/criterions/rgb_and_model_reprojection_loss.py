@@ -30,7 +30,7 @@ class RGBandModelReprojectionLoss(nn.Module):
         camera_matrix = torch.repeat_interleave(self._camera_matrix[None], keypoint_count, dim=0).to(keypoints.device)
         predicted_keypoints = torch.bmm(camera_matrix, transformed_predicted_points3d[:, :, None])[:, :, 0]
 
-        predicted_keypoints = predicted_keypoints[:, :2] / predicted_points3d[:, 2:3]
+        predicted_keypoints = predicted_keypoints[:, :2] / predicted_keypoints[:, 2:3]
         reprojection_losses = torch.norm(predicted_keypoints - keypoints, p=2, dim=1)
         point_distances = torch.norm(predicted_points3d - truth_points3d, p=2, dim=1)
 
@@ -42,6 +42,7 @@ class RGBandModelReprojectionLoss(nn.Module):
             "loss": loss,
             "reprojection_loss": torch.mean(reprojection_losses),
             "distance_loss": torch.mean(point_distances),
+            "good_reprojection_loss": torch.mean(reprojection_losses[good_point_mask]),
             "good_point_ratio": good_point_ratio
         }
 
