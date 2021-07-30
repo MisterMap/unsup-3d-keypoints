@@ -27,5 +27,5 @@ class PointNetwork(BaseLightningModule):
     def loss(self, batch):
         output = self.forward(batch["descriptor"])
 
-        loss = self._criterion(output, batch["keypoint"], batch["point3d"], batch["position"], batch["mask"])
+        loss = self._criterion(output, batch["keypoint"], batch["point3d"], batch["position"])
         return output, loss

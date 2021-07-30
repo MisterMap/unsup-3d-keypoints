@@ -11,15 +11,14 @@ class DescriptorDataset(Dataset):
         self._keypoint_map.load_from_kapture(kapture_data, minimal_observation_count)
 
     def __getitem__(self, item):
-        image_index = self._keypoint_map.image_index_list[item]
-        keypoint_index = self._keypoint_map.keypoint_index_list[item]
+        image_index = self._keypoint_map.masked_image_index_list[item]
+        keypoint_index = self._keypoint_map.masked_keypoint_index_list[item]
 
         return {"descriptor": self._keypoint_map.descriptors[image_index][keypoint_index],
                 "point3d": self._keypoint_map.points3d[image_index][keypoint_index],
                 "keypoint": self._keypoint_map.keypoints[image_index][keypoint_index],
-                "mask": self._keypoint_map.mask[image_index][keypoint_index],
                 "position": self._keypoint_map.positions[image_index],
                 "image_index": image_index}
 
     def __len__(self):
-        return self._keypoint_map.keypoint_count
+        return len(self._keypoint_map.masked_keypoint_index_list)

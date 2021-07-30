@@ -12,9 +12,11 @@ class KeypointMap(object):
         self.descriptors = None
         self.mask = None
         self.positions = None
-        self.image_index_list = None
-        self.keypoint_index_list = None
-        self.image_index_from_image_name = None
+        self.image_index_list = []
+        self.keypoint_index_list = []
+        self.image_index_from_image_name = []
+        self.masked_image_index_list = []
+        self.masked_keypoint_index_list = []
         self.keypoint_count = 0
         self._descriptor_name = descriptor_name
 
@@ -42,8 +44,8 @@ class KeypointMap(object):
             points3d.append(np.zeros((point_count, 3), dtype=np.float32))
             mask.append(np.zeros(point_count, dtype=np.bool))
             image_indexes[image_path] = i
-            image_index_list.extend([i] * point_count)
-            keypoint_index_list.extend(range(point_count))
+            image_index_list.append(np.array([i] * point_count))
+            keypoint_index_list.append(np.arange(point_count))
             self.keypoint_count += point_count
 
         for point_index, observation in kapture_data.observations.items():
@@ -52,12 +54,17 @@ class KeypointMap(object):
                     image_index = image_indexes[observation_image_name]
                     mask[image_index][image_keypoints_index] = True
                     points3d[image_index][image_keypoints_index] = kapture_data.points3d[point_index][:3]
+
+        for i in range(len(mask)):
+            self.image_index_list.extend(list(image_index_list[i]))
+            self.keypoint_index_list.extend(list(keypoint_index_list[i]))
+            self.masked_image_index_list.extend(list(image_index_list[i][mask[i]]))
+            self.masked_keypoint_index_list.extend(list(keypoint_index_list[i][mask[i]]))
         self.descriptors = descriptors
         self.keypoints = keypoints
         self.points3d = points3d
         self.mask = mask
-        self.image_index_list = image_index_list
-        self.keypoint_index_list = keypoint_index_list
+
         self.image_index_from_image_name = image_indexes
         self.load_trajectory(kapture_data)
 

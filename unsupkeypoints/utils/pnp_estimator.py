@@ -8,14 +8,14 @@ class PnPEstimator(object):
                                      [0, 525., 240],
                                      [0, 0, 1]])
         self._dist_coef = np.zeros(5)
-        self._point_count_threshold = 3
+        self._point_count_threshold = 5
 
-    def calculate_position_errors(self, points3d, keypoint, image_index, mask, ground_truth_positions):
+    def calculate_position_errors(self, points3d, keypoint, image_index, ground_truth_positions):
         image_index_set = set(image_index)
         final_truth_positions = []
         final_predicted_positions = []
         for index in image_index_set:
-            image_mask = mask & (image_index == index)
+            image_mask = image_index == index
             if np.count_nonzero(image_mask) >= self._point_count_threshold:
                 image_points3d = points3d[image_mask]
                 image_keypoints = keypoint[image_mask]

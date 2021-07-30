@@ -36,7 +36,8 @@ class TestBinarizationPointNet(unittest.TestCase):
             ),
             criterion=AttributeDict(
                 name="RegressionLoss"
-            )
+            ),
+            metric_logging_frequency=1.
         )
         self._trainer = pl.Trainer(logger=TensorBoardLogger("lightning_logs"), max_epochs=1, gpus=1)
         factory = UniversalFactory([RegressionLoss, SimpleModel, BinarizationPointNetwork])
